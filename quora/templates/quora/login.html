@@ -1,0 +1,12 @@
+<h2>Login page</h2>
+
+<form action="{% url 'quora:userLogin' %}" method="post">
+    {% csrf_token %}
+    
+    <label for="username">Your name: </label>
+    <input id="username" type="text" name="username">
+    <br>
+    <label for="password">Password: </label>
+    <input id="password" type="password" name="password">
+    <input type="submit" value="OK">
+</form>

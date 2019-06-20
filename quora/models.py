@@ -1,14 +1,10 @@
 from django.db import models
 
-# Create your models here.
-
 
 class User(models.Model):
-    user_name = models.CharField(max_length=200)
+    user_name = models.CharField(max_length=200, unique=True)
     user_created_at = models.DateTimeField('date user created')
-
-    def __str__(self):
-        return self.user_name
+    password = models.CharField(max_length=100, default='password')
 
 
 class Post(models.Model):
@@ -18,5 +14,5 @@ class Post(models.Model):
     post_created_at = models.DateTimeField('date post created')
     post_likes = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.post_title
+    def recently_created_post(self):
+        return Post.objects.all().order_by('-post_created_at')[:5]

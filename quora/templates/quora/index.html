@@ -1,0 +1,32 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'quora/style.css' %}">
+
+{% if username %}
+<p>Logged in as <b>{{username}}</b></p>
+<p><a href="{% url 'quora:userLogout' %}">Logout?</a> </p>
+{%else%}
+<p>
+    <a href="{% url 'quora:signup' %}">Signup</a>
+    <a href="{% url 'quora:loginpage' %}">Login</a>
+</p>
+{% endif %}
+<a href="{% url 'quora:createPostPage' %}">Create Post</a>
+
+{% csrf_token %}
+{% if latest_post_list %}
+{% for p in latest_post_list %}
+<div class="post_block">
+    <h3>
+        {{p.post_title}}
+    </h3>
+    <p>
+        {{p.post_content}}
+    </p>
+    <h5>
+        by {{p.user.user_name}}
+    </h5>
+    <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
+</div>
+
+{% endfor %} {% endif %}  
