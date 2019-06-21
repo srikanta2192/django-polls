@@ -1,20 +1,20 @@
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.db import IntegrityError
 from django.views import generic
-from .decorators import user_is_post_author
+from .decorators import user_is_post_author, user_login_required
 from .models import Post, User
 from .forms import PostForm, UserForm
 
 import pdb
 
 
-@login_required
+@user_login_required
 def createPost(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -25,8 +25,8 @@ def createPost(request):
                 post_created_at=timezone.now(),
                 post_content=form.data['post_content'],
                 post_likes=0,
-                post_title=form.data['post_title'],
-                user=get_object_or_404(User, user_name=username)
+                title=form.data['title'],
+                user=get_object_or_404(User, name=username)
             )
             return HttpResponseRedirect('/quora/')
         else:
@@ -38,16 +38,9 @@ def createPost(request):
         })
 
 
-@login_required
+@user_login_required
 def createPostPage(request):
-    try:
-        if request.session['user']:
-            return render(request, 'quora/createPostPage.html')
-        else:
-            return render(request, 'quora/login.html')
-
-    except KeyError:
-        return render(request, 'quora/login.html')
+    return render(request, 'quora/createPostPage.html')
 
 
 def createUser(request):
@@ -57,11 +50,11 @@ def createUser(request):
             if form.is_valid():
                 form.clean_message()
                 new_user = User.objects.create(
-                    user_created_at=timezone.now(),
-                    user_name=form.data['username'],
+                    created_at=timezone.now(),
+                    name=form.data['username'],
                     password=form.data['password'],
                 )
-                request.session['user'] = new_user.user_name
+                request.session['user'] = new_user.name
                 return HttpResponse('User created successfully')
         except IntegrityError as e:
             return HttpResponse("Username exists! Username should be unique")
@@ -72,12 +65,39 @@ def createUser(request):
         form = PostForm()
 
 
-@login_required
+@user_login_required
 @user_is_post_author
 def editPostPage(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    return render(request, 'quora/createPostPage.html', {'post': post})
 
-    return HttpResponse("hello")
+
+@user_login_required
+@user_is_post_author
+def editPostSave(request, post_id):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+
+        if form.is_valid():
+            post = get_object_or_404(Post, pk=post_id)
+            post.title = form.data['title']
+            post.post_content = form.data['post_content']
+            post.save()
+            return HttpResponseRedirect("/quora/{}".format(post_id))
+        else:
+            form = PostForm()
+
+
+@user_login_required
+def like(request, post_id, username):
+    post = get_object_or_404(Post, pk=post_id)
+    post.post_likes += 1
+    # pdb.set_trace()
+    print("post likes = {}".format(post.post_likes))
+    post.save()
+    user = get_object_or_404(User, name=username)
+    # Like.objects.create(post=post, liked_by=user)
+    return render(request, 'quora/viewPost.html', {'post': post})
 
 
 def index(request):
@@ -86,7 +106,7 @@ def index(request):
     try:
         user = request.session['user']
     except KeyError:
-        user = ''
+        user = None
     return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
                                                 'username': user})
 
@@ -108,6 +128,7 @@ def userLogin(request):
             username=form.data['username'], password=form.data['password'])
         if user is not None:
             print('correct details')
+            login(request, user)
             request.session['user'] = user.username
             return HttpResponseRedirect('/quora/')
         else:
@@ -125,9 +146,24 @@ def userLogout(request):
 
 def user_list(request):
     user_list = User.objects.order_by('-user_created_at')
-    output = (', ').join([u.user_name for u in user_list])
+    output = (', ').join([u.name for u in user_list])
 
     return HttpResponse(output)
+
+
+def userPosts(request, username):
+    user = User.objects.get(name=username)
+    post_list_by_user = Post.objects.filter(user=user)
+    return render(request, 'quora/userPosts.html', {'post_list_by_user': post_list_by_user})
+
+
+def viewPost(request, post_id):
+    try:
+        post = Post.objects.get(pk=post_id)
+        print(post.id)
+        return render(request, 'quora/viewPost.html', {'post': post})
+    except ObjectDoesNotExist:
+        return HttpResponse("Post does not exist")
 
 
 # class IndexView(generic.View):

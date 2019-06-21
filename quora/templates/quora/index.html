@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'quora/style.css' %}">
 
 {% if username %}
-<p>Logged in as <b>{{username}}</b></p>
+<p>Logged in as <b><a href="{% url 'quora:userPosts' username %}">{{username}}</a></b></p>
 <p><a href="{% url 'quora:userLogout' %}">Logout?</a> </p>
 {%else%}
 <p>
@@ -18,15 +18,20 @@
 {% for p in latest_post_list %}
 <div class="post_block">
     <h3>
-        {{p.post_title}}
+        {{p.title}}
     </h3>
     <p>
         {{p.post_content}}
     </p>
     <h5>
-        by {{p.user.user_name}}
+        by {{p.user.name}}
     </h5>
-    <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
+    <p> {{p.post_likes}} Like{{p.post_likes|pluralize}}</p>
+    <a href="{% url 'quora:like' p.id username%}">Like</a>
+    {% if p.user.name == username %}
+        <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
+    {% endif %}    
+    <a href="{% url 'quora:viewPost' p.id %}">View</a>
 </div>
 
 {% endfor %} {% endif %}  

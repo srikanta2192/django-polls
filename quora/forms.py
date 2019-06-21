@@ -10,7 +10,7 @@ class UserForm(forms.Form):
         password = self.cleaned_data['password']
         username = self.cleaned_data['username']
         try:
-            if User.objects.filter(user_name=username).exists():
+            if User.objects.filter(name=username).exists():
                 raise forms.ValidationError("Username exists")
             return username
         except:
@@ -18,5 +18,5 @@ class UserForm(forms.Form):
 
 
 class PostForm(forms.Form):
-    post_title = forms.CharField(max_length=200)
+    title = forms.CharField(max_length=200)
     post_content = forms.CharField(max_length=400)
