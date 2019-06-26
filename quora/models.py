@@ -10,9 +10,9 @@ class User(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    post_content = models.CharField(max_length=400)
-    post_created_at = models.DateTimeField('date post created')
-    post_likes = models.IntegerField(default=0)
+    content = models.CharField(max_length=400)
+    created_at = models.DateTimeField('date post created')
+    likes = models.IntegerField(default=0)
 
     def recently_created_post(self):
         return Post.objects.all().order_by('-post_created_at')[:5]
@@ -21,3 +21,7 @@ class Post(models.Model):
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     liked_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commented_by = models.ForeignKey(User, on_delete=models.CASCADE)

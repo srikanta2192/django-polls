@@ -6,12 +6,12 @@
         {{p.title}}
     </h3>
     <p>
-        {{p.post_content}}
+        {{p.content}}
     </p>
     <h5>
         by {{p.user.name}}
     </h5>
-    <p> Like{{p.post_likes|pluralize}}</p>
+    <p> Like{{p.likes|pluralize}}</p>
     <a href="{% url 'quora:like' p.id %}">Like</a>
     <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
     <a href="{% url 'quora:viewPost' p.id %}">View</a>

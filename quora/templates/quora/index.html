@@ -21,16 +21,25 @@
         {{p.title}}
     </h3>
     <p>
-        {{p.post_content}}
+        {{p.content}}
     </p>
     <h5>
         by {{p.user.name}}
     </h5>
-    <p> {{p.post_likes}} Like{{p.post_likes|pluralize}}</p>
+    <p> {{p.likes}} Like{{p.likes|pluralize}}</p>    
+
+    {% if p.liked_by_session_user == True %}
+    <a href="{% url 'quora:like' p.id username%}">Dislike</a>
+
+    {% else %}
     <a href="{% url 'quora:like' p.id username%}">Like</a>
+
+    {% endif %}
+    <a href="{% url 'quora:commentPage' p.id%}">Comment</a>
+    
     {% if p.user.name == username %}
-        <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
-    {% endif %}    
+    <a href="{% url 'quora:editPostPage' p.id %}">Edit</a>
+    {% endif %}
     <a href="{% url 'quora:viewPost' p.id %}">View</a>
 </div>
 

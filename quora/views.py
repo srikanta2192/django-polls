@@ -8,11 +8,14 @@ from django.utils import timezone
 from django.db import IntegrityError
 from django.views import generic
 from .decorators import user_is_post_author, user_login_required
-from .models import Post, User
+from .models import Post, User, Like
 from .forms import PostForm, UserForm
 
 import pdb
 
+@user_login_required
+def commentPage(request, post_id):
+    return HttpResponse(post_id)
 
 @user_login_required
 def createPost(request):
@@ -88,27 +91,39 @@ def editPostSave(request, post_id):
             form = PostForm()
 
 
-@user_login_required
-def like(request, post_id, username):
-    post = get_object_or_404(Post, pk=post_id)
-    post.post_likes += 1
-    # pdb.set_trace()
-    print("post likes = {}".format(post.post_likes))
-    post.save()
-    user = get_object_or_404(User, name=username)
-    # Like.objects.create(post=post, liked_by=user)
-    return render(request, 'quora/viewPost.html', {'post': post})
-
-
 def index(request):
-    latest_post_list = Post.objects.all().order_by('-post_created_at')[:5]
-    update_post_list = [(p.user for p in latest_post_list)]
+    latest_post_list = Post.objects.all().order_by('-created_at')[:7]
+    for p in latest_post_list:
+        p.likes = Like.objects.filter(post_id=p.id).count()
+
     try:
         user = request.session['user']
+        user_id = request.session['user_id']
+
+        for p in latest_post_list:
+            p.liked_by_session_user = Like.objects.filter(
+                liked_by_id=user_id, post_id=p.id).count() > 0
     except KeyError:
         user = None
     return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
                                                 'username': user})
+
+
+@user_login_required
+def like(request, post_id, username):
+
+    post = get_object_or_404(Post, pk=post_id)
+    user = get_object_or_404(User, name=username)
+
+    if Like.objects.filter(
+            liked_by_id=user.id, post_id=post_id).count() > 0:
+        Like.objects.filter(
+            liked_by_id=user.id, post_id=post_id).delete()
+
+    else:
+        like = Like.objects.create(post=post, liked_by=user)
+
+    return render(request, 'quora/viewPost.html', {'post': post})
 
 
 def loginPage(request):
@@ -130,6 +145,7 @@ def userLogin(request):
             print('correct details')
             login(request, user)
             request.session['user'] = user.username
+            request.session['user_id'] = user.id
             return HttpResponseRedirect('/quora/')
         else:
             print('incorrect details')
