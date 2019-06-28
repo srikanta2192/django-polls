@@ -1,10 +1,49 @@
-
+{% extends 'index.html'%}
 {% block content %}
-    <h3>
-        {{post.title}}
-    </h3>
-    <p>
-        {{post.content}}
-    </p>
-    <a href="{% url 'quora:index' %}">Home</a>
+<div class="card card_things">
+    <div class="card-body">
+        <div class="card-title">
+            <h5>{{post.title|title}}</h5>
+            <h6>by {{post.user.name|title}}</h6>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="card-text">
+            <div class="col-sm-12 padding_left">
+                <p>{{post.content}}</p>
+            </div>
+            <div class="col-sm-12 padding_left">
+              
+                {{post.likes}} 
+                {% if post.liked_by_session_user %}
+                <a href="{% url 'quora:like' post.id %}"><i class="fas fa-thumbs-up"></i></a>
+                {% else %}
+                <a href="{% url 'quora:like' post.id %}"><i class="far fa-thumbs-up"></i></a>
+                {% endif %} <a class="action_margin" href="{% url 'quora:commentPage' post.id%}"><i class="far fa-comment-dots"></i></a>
+                {% if post.user.name == username %}
+                <a class="action_margin" href="{% url 'quora:editPostPage' post.id %}"><i class="far fa-edit"></i></a>
+                {% endif %}
+                <a class="action_margin" href="{% url 'quora:viewPost' post.id %}"><i class="fas fa-envelope-open-text"></i></a>
+            </div>
+            <div class="col-sm-12 padding_left">
+                {%if comment%}
+                <p>
+                    <b>Comments:</b>
+                </p>
+                {%for c in comment%}
+                <div>
+                    <p>{{c.content}}
+                        {% if username == c.commented_by.name %}
+                        <a href="{% url 'quora:editCommentPage' c.post.id c.id  %}"><i class="far fa-edit"></i>
+                        </a>
+                        {%endif%}
+                    </p>
+                    <p>by {{c.commented_by.name}}</p>
+                </div>
+                {%endfor%}
+                {%endif%}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

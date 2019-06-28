@@ -1,5 +1,4 @@
 {% extends 'quora/index.html' %}
-
 {% block content %}
 <div class="card card_things">
     <div class="card-body">
@@ -15,12 +14,19 @@
         </div>
     </div>
 </div>
-<form action="{%url 'quora:createComment' post.id%}" method="POST">
+{%if comment%}
+
+<form action="{%url 'quora:editComment' comment.id %}" method='POST'>
     {% csrf_token %}
-    <label for="content" class="mt-2">Comment:</label>
-    <input class="form-control create_comment_input" id="content" name="content">
-    <br>
-    <br>
-    <button class="btn btn-primary">Save</button>
+
+    <div class="form-group">
+        <label for="content">Comment</label>
+        <input id="content" class="form-control" name="content" value="{{comment.content}}">
+        <br>
+        <h6>by {{comment.commented_by.name|title}}</h6>
+
+    </div>
+    <button type='submit' class="btn btn-primary" value="Save">Save</button>
 </form>
+{%endif%}
 {% endblock %}

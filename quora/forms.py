@@ -19,4 +19,4 @@ class UserForm(forms.Form):
 
 class PostForm(forms.Form):
     title = forms.CharField(max_length=200)
-    post_content = forms.CharField(max_length=400)
+    content = forms.CharField(max_length=400)
