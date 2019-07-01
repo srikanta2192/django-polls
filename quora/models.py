@@ -14,9 +14,6 @@ class Post(models.Model):
     created_at = models.DateTimeField('date post created')
     likes = models.IntegerField(default=0)
 
-    def recently_created_post(self):
-        return Post.objects.all().order_by('-post_created_at')[:5]
-
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

@@ -35,6 +35,6 @@ def user_login_required(function):
             else:
                 return function(request, *args, **kwargs)
         except KeyError:
-
             return HttpResponseRedirect('/quora/loginpage/')
+
     return wrapper

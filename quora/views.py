@@ -1,17 +1,18 @@
-from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.sessions.models import Session
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.db import IntegrityError
 from django.views import generic
+
 from .decorators import user_is_post_author, user_login_required
-from .models import Comment, Post, User, Like
 from .forms import PostForm, UserForm
+from .models import Comment, Like, Post, User
 
 
 @user_login_required
@@ -215,23 +216,21 @@ def editPostSave(request, post_id):
             form = PostForm()
 
 
-def index(request):
-    latest_post_list = Post.objects.all().order_by('-created_at')[:7]
-    for p in latest_post_list:
-        p.likes = Like.objects.filter(post_id=p.id).count()
-        p.comment = Comment.objects.filter(post_id=p.id)
-    try:
-        user = request.session['user']
-        user_id = request.session['user_id']
+class IndexView(generic.View):
 
+    def get(self, request):
+        latest_post_list = Post.objects.all().order_by('-created_at')[:7]
         for p in latest_post_list:
-            p.liked_by_session_user = Like.objects.filter(
-                liked_by_id=user_id, post_id=p.id).count()
+            p.likes = Like.objects.filter(post_id=p.id).count()
+            p.comment = Comment.objects.filter(post_id=p.id)
+            current_user_details = current_user(request)
+            user = get_object_or_404(User, name=current_user_details['user'])
+            for p in latest_post_list:
+                p.liked_by_session_user = Like.objects.filter(
+                    liked_by_id=user.id, post_id=p.id).count()
 
-    except KeyError:
-        user = None
-    return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
-                                                'username': user})
+        return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
+                                                    'username': current_user_details['user']})
 
 
 @user_login_required
@@ -248,7 +247,8 @@ def like(request, post_id):
             like = Like.objects.create(post=post, liked_by=user)
 
         comment = Comment.objects.filter(post_id=post_id)
-        return index(request)
+
+        return IndexView.get(IndexView, request)
     else:
         messages.info(request, "Login to continue")
         return render(request, "/quora/login.html")
