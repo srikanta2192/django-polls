@@ -1,6 +1,6 @@
 from django import forms
 from quora.models import User, Post
-
+from django.core.exceptions import ObjectDoesNotExist
 
 class UserForm(forms.Form):
     username = forms.CharField(max_length=200)
@@ -13,7 +13,7 @@ class UserForm(forms.Form):
             if User.objects.filter(name=username).exists():
                 raise forms.ValidationError("Username exists")
             return username
-        except:
+        except ObjectDoesNotExist:
             pass
 
 

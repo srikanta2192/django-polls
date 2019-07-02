@@ -22,9 +22,7 @@ class ChangePasswordPage(generic.View):
             messages.info(request, "Please login to continue")
             return render(request, 'quora/login.html')
 
-
-class ChangePasswordExecution(generic.View):
-
+    @method_decorator(user_login_required)
     def post(self, request):
         current_user_details = current_user(request)
         if current_user_details['user'] is not None:

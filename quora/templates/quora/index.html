@@ -92,10 +92,10 @@
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="card-text">
-                            <div class="col-sm-12 padding_left">
+                            <div class="col-sm-12 pl-0">
                                 <p>{{p.content}}</p>
                             </div>
-                            <div class="col-sm-12 padding_left">
+                            <div class="col-sm-12 pl-0">
                                 {{p.likes}}
                                 {% if p.liked_by_session_user %}
                                 <a href="{% url 'quora:like' p.id %}"><i class="fas fa-thumbs-up"></i></a>
@@ -113,15 +113,15 @@
                                         class="fas fa-envelope-open-text"></i></a>
 
                             </div>
-                            <div class="col-sm-12 padding_left mt-2">
+                            <div class="col-sm-12 pl-0 mt-2">
                                 {%if p.comment%}
                                 <b>Answers:</b>
                                 {%for c in p.comment%}
                                 <div class="mt-1">
                                     <span>{{c.content}}</span>
-                                    by <a href="{% url 'quora:userPosts' c.commented_by.name %}">
-                                        {{c.commented_by.name|title}}</a>
-                                    {% if p.user.name == username %}
+                                    by <a href="{% url 'quora:userPosts' c.by.name %}">
+                                        {{c.by.name|title}}</a>
+                                    {% if c.by.name == username %}
                                     <a href="{% url 'quora:editCommentPage' p.id c.id %}"><i
                                             class="far fa-edit"></i></a></a>
                                     {%endif%}

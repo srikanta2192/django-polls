@@ -78,7 +78,7 @@ def createComment(request, post_id):
             if len(content) > 0:
                 post = get_object_or_404(Post, pk=post_id)
                 Comment.objects.create(
-                    content=content, commented_by=user, post=post)
+                    content=content, by=user, post=post)
                 comment = Comment.objects.filter(post_id=post_id)
             else:
                 messages.info(request, "Content cannot be empty")
@@ -219,19 +219,22 @@ def editPostSave(request, post_id):
 class IndexView(generic.View):
 
     def get(self, request):
-        latest_post_list = Post.objects.all().order_by('-created_at')[:7]
-        for p in latest_post_list:
-            p.likes = Like.objects.filter(post_id=p.id).count()
-            p.comment = Comment.objects.filter(post_id=p.id)
-            current_user_details = current_user(request)
+        latest_post_list = Post.objects.all().order_by('-created_at')[:20]
+        current_user_details = current_user(request)
+        try:
             user = get_object_or_404(User, name=current_user_details['user'])
             for p in latest_post_list:
-                p.liked_by_session_user = Like.objects.filter(
-                    liked_by_id=user.id, post_id=p.id).count()
+                p.likes = Like.objects.filter(post_id=p.id).count()
+                p.comment = Comment.objects.filter(post_id=p.id)
 
-        return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
-                                                    'username': current_user_details['user']})
-
+                if user is not None:
+                    p.liked_by_session_user = Like.objects.filter(
+                        by_id=user.id, post_id=p.id).count()
+            return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
+                                                        'username': current_user_details['user']})
+        except Http404:
+            return render(request, 'quora/index.html', {'latest_post_list': latest_post_list,
+                                                        'username': None})
 
 @user_login_required
 def like(request, post_id):
@@ -240,11 +243,11 @@ def like(request, post_id):
     user = get_object_or_404(User, name=current_user_details['user'])
     if current_user_details['user'] is not None:
         if Like.objects.filter(
-                liked_by_id=user.id, post_id=post_id).count() > 0:
+                by_id=user.id, post_id=post_id).count() > 0:
             Like.objects.filter(
-                liked_by_id=user.id, post_id=post_id).delete()
+                by_id=user.id, post_id=post_id).delete()
         else:
-            like = Like.objects.create(post=post, liked_by=user)
+            like = Like.objects.create(post=post, by=user)
 
         comment = Comment.objects.filter(post_id=post_id)
 
@@ -314,11 +317,3 @@ def viewPost(request, post_id):
         return render(request, 'quora/viewPost.html', {'post': post, 'comment': comment, 'username': current_user_details['user']})
     except ObjectDoesNotExist:
         raise Http404
-
-
-# class IndexView(generic.View):
-#     template_name = 'quora/index.html'
-#     context_object_name = 'latest_post_list'
-
-#     def get_queryset(self):
-#         return Post.objects.all().order_by('-post_created_at')[:10]

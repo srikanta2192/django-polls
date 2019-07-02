@@ -2,7 +2,7 @@ from django.views import generic
 from django.shortcuts import render, get_object_or_404
 from quora.views import current_user
 from quora.forms import UserForm
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect
 from quora.models import User
 from django.contrib import messages
 

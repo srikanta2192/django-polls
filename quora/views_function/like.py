@@ -17,11 +17,11 @@ class LikeView(generic.View):
         user = get_object_or_404(User, name=current_user_details['user'])
         if current_user_details['user'] is not None:
             if Like.objects.filter(
-                    liked_by_id=user.id, post_id=post_id).count() > 0:
+                    by_id=user.id, post_id=post_id).count() > 0:
                 Like.objects.filter(
-                    liked_by_id=user.id, post_id=post_id).delete()
+                    by_id=user.id, post_id=post_id).delete()
             else:
-                like = Like.objects.create(post=post, liked_by=user)
+                like = Like.objects.create(post=post, by=user)
 
             comment = Comment.objects.filter(post_id=post_id)
 

@@ -23,7 +23,7 @@ class CreateCommentView(generic.View):
                 if len(content) > 0:
                     post = get_object_or_404(Post, pk=post_id)
                     Comment.objects.create(
-                        content=content, commented_by=user, post=post)
+                        content=content,by=user, post=post)
                     comment = Comment.objects.filter(post_id=post_id)
                 else:
                     messages.info(request, "Content cannot be empty")

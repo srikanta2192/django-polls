@@ -10,16 +10,15 @@ class User(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    content = models.CharField(max_length=400)
+    content = models.TextField(max_length=400)
     created_at = models.DateTimeField('date post created')
-    likes = models.IntegerField(default=0)
 
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    liked_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Comment(models.Model):
     content = models.TextField(max_length=1000, default="")
-    commented_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

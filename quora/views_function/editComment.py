@@ -1,16 +1,17 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import generic
-from django.contrib import messages
 
-
-from quora.views import current_user, viewPost
-from quora.models import Post, Comment
 from quora.decorators import user_login_required
+from quora.models import Comment, Post
+from quora.views import current_user, viewPost
 
 
 class EditCommentPageView(generic.View):
+
+    @method_decorator(user_login_required)
     def get(self, request, post_id, comment_id):
         post = get_object_or_404(Post, pk=post_id)
         comment = get_object_or_404(Comment, pk=comment_id)
@@ -23,8 +24,6 @@ class EditCommentPageView(generic.View):
             messages.info(request, "Login to continue")
             return render(request, "/quora/login.html")
 
-
-class EditCommentExecutionView(generic.View):
     @method_decorator(user_login_required)
     def post(self, request, comment_id):
         if request.method == 'POST':
@@ -38,4 +37,7 @@ class EditCommentExecutionView(generic.View):
                 messages.info(request, "Comment should not be empty")
                 return EditCommentPageView(EditCommentPageView, request, comment.post.id, comment_id)
         else:
-            return HttpResponse("something wrong")
+            context = {
+                'message': 'Something\'s wrong'
+            }
+            return render(request, 'quora/error_page.html', context)

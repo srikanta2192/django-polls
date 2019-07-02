@@ -8,10 +8,10 @@
         </div>
         <div class="dropdown-divider"></div>
         <div class="card-text">
-            <div class="col-sm-12 padding_left">
+            <div class="col-sm-12 pl-0">
                 <p>{{post.content}}</p>
             </div>
-            <div class="col-sm-12 padding_left">
+            <div class="col-sm-12 pl-0">
               
                 {{post.likes}} 
                 {% if post.liked_by_session_user %}
@@ -24,7 +24,7 @@
                 {% endif %}
                 <a class="action_margin" href="{% url 'quora:viewPost' post.id %}"><i class="fas fa-envelope-open-text"></i></a>
             </div>
-            <div class="col-sm-12 padding_left">
+            <div class="col-sm-12 pl-0">
                 {%if comment%}
                 <p>
                     <b>Comments:</b>
@@ -32,12 +32,12 @@
                 {%for c in comment%}
                 <div>
                     <p>{{c.content}}
-                        {% if username == c.commented_by.name %}
+                        {% if username == c.by.name %}
                         <a href="{% url 'quora:editCommentPage' c.post.id c.id  %}"><i class="far fa-edit"></i>
                         </a>
                         {%endif%}
                     </p>
-                    <p>by {{c.commented_by.name}}</p>
+                    <p>by {{c.by.name}}</p>
                 </div>
                 {%endfor%}
                 {%endif%}

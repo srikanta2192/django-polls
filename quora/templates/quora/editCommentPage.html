@@ -8,7 +8,7 @@
         </div>
         <div class="dropdown-divider"></div>
         <div class="card-text">
-            <div class="col-sm-12 padding_left">
+            <div class="col-sm-12 pl-0">
                 <p>{{post.content}}</p>
             </div>
         </div>
@@ -23,7 +23,7 @@
         <label for="content">Comment</label>
         <input id="content" class="form-control" name="content" value="{{comment.content}}">
         <br>
-        <h6>by {{comment.commented_by.name|title}}</h6>
+        <h6>by {{comment.by.name|title}}</h6>
 
     </div>
     <button type='submit' class="btn btn-primary" value="Save">Save</button>
