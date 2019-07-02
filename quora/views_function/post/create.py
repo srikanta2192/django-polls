@@ -19,7 +19,9 @@ class CreatePostPageView(generic.View):
     @method_decorator(user_login_required)
     def get(self, request):
         current_user_details = current_user(request)
-        return render(request, 'quora/createPostPage.html', {'username': current_user_details['user']})
+        template = 'quora/post/create.html',
+        context = {'username': current_user_details['user']}
+        return render(request, template, context)
 
 
 class CreatePostView(generic.View):
@@ -34,7 +36,6 @@ class CreatePostView(generic.View):
                 new_post = Post.objects.create(
                     created_at=timezone.now(),
                     content=form.data['content'],
-                    likes=0,
                     title=form.data['title'],
                     user=get_object_or_404(User, name=username)
                 )
@@ -44,5 +45,6 @@ class CreatePostView(generic.View):
                 form = PostForm()
 
         except KeyError:
+            template = 'quora/login.html'
             messages.info(request, "Login to create a post")
-            return render(request, 'quora/login.html')
+            return render(request, template)

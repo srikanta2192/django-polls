@@ -14,13 +14,14 @@ class CreateUserView(generic.View):
     def post(self, request):
         if request.method == 'POST':
             form = UserForm(request.POST)
+            import pdb; pdb.set_trace()
             try:
                 if form.is_valid():
                     form.clean_message()
                     new_user = User.objects.create(
                         created_at=timezone.now(),
                         name=form.data['username'],
-                        password=form.data['password'],
+                        password=form.data['password1'],
                     )
                     request.session['user'] = new_user.name
                     messages.success(request, "User created successfully")

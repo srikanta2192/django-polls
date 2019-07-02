@@ -16,6 +16,7 @@ class CreateCommentView(generic.View):
     @method_decorator(user_login_required)
     def post(self, request, post_id):
         current_user_details = current_user(request)
+        template = 'quora/post/view.html'
         if current_user_details['user'] is not None:
             user = get_object_or_404(User, name=current_user_details['user'])
             if request.method == 'POST':
@@ -23,7 +24,7 @@ class CreateCommentView(generic.View):
                 if len(content) > 0:
                     post = get_object_or_404(Post, pk=post_id)
                     Comment.objects.create(
-                        content=content,by=user, post=post)
+                        content=content, by=user, post=post)
                     comment = Comment.objects.filter(post_id=post_id)
                 else:
                     messages.info(request, "Content cannot be empty")
@@ -31,6 +32,8 @@ class CreateCommentView(generic.View):
         else:
             messages.info(request, "Login to create a post")
             return render(request, 'quora/login.html')
+            
+        context = {'post': post, 'comment': comment,
+                   'username': current_user_details['user']}
 
-        return render(request, 'quora/viewPost.html', {'post': post, 'comment': comment, 'username': current_user_details['user']})
-
+        return render(request, template, context)

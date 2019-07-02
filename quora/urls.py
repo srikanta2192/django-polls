@@ -1,18 +1,18 @@
 from django.conf.urls import url
 
-from quora.login import LoginPageView, UserLoginView
+from quora.login import LoginPageView
 from quora.signup import SignupView
 from quora.views import IndexView, userLogout, viewPost
 from quora.views_function.changePassword import ChangePasswordPage
-from quora.views_function.commentPage import CommentPageView
-from quora.views_function.createComment import CreateCommentView
-from quora.views_function.createPost import CreatePostPageView, CreatePostView
+from quora.views_function.comment.commentPage import CommentPageView
+from quora.views_function.comment.create import CreateCommentView
+from quora.views_function.post.create import CreatePostPageView, CreatePostView
 from quora.views_function.createUser import CreateUserView
-from quora.views_function.editComment import EditCommentPageView
-from quora.views_function.editPostPage import EditPostPageView
-from quora.views_function.editPostSave import EditPostSaveView
+from quora.views_function.comment.edit import EditCommentPageView
+from quora.views_function.post.editPage import EditPostPageView
+from quora.views_function.post.editSave import EditPostSaveView
 from quora.views_function.like import LikeView
-from quora.views_function.postsByUser import PostsByUserView
+from quora.views_function.post.byUser import PostsByUserView
 
 app_name = 'quora'
 urlpatterns = [
@@ -20,14 +20,14 @@ urlpatterns = [
     url(r'^(?P<post_id>[0-9]+)/$', viewPost, name='viewPost'),
     url(r'^signup/$', SignupView.as_view(), name='signup'),
     url(r'^loginpage/$', LoginPageView.as_view(), name='loginpage'),
-    url(r'^user/login/$', UserLoginView.as_view(), name='userLogin'),
+    url(r'^user/login/$', LoginPageView.as_view(), name='userLogin'),
     url(r'^user/logout/$', userLogout, name='userLogout'),
     url(r'^password/change/$', ChangePasswordPage.as_view(),
         name='changePasswordPage'),
     url(r'^password/change/save/$', ChangePasswordPage.as_view(), name='changePassword'),
     url(r'^(?P<username>[a-zA-Z0-9]+)/userPosts/$',
         PostsByUserView.as_view(), name='userPosts'),
-    url(r'^(?P<post_id>[0-9]+)/commentPage/$',
+    url(r'^(?P<post_id>[0-9]+)/comment/$',
         CommentPageView.as_view(), name='commentPage'),
     url(r'^(?P<post_id>[0-9]+)/createComment/$',
         CreateCommentView.as_view(), name='createComment'),

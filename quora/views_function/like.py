@@ -27,5 +27,6 @@ class LikeView(generic.View):
 
             return IndexView.get(IndexView, request)
         else:
+            template = "/quora/login.html"
             messages.info(request, "Login to continue")
-            return render(request, "/quora/login.html")
+            return render(request, template)

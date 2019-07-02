@@ -11,22 +11,22 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <div class="container">
-    <div class="row head_margin">
+    <div class="row mt-3">
         <div class="col-sm-12">
-            <div class="messages messages_details">
+            <div class="messages  messages_details pr-8">
                 {% for message in messages %}
                 <span {% if message.tags %} class="{{ message.tags }} badge badge-danger messages_font"
                     {% endif %}>{{ message }}</span>
                 {% endfor %}
             </div>
         </div>
-        <div class="col-sm-9 login_quote">
+        <div class="col-sm-9 login_quote pt-15">
 
             <h1>Welcome to Q!</h1>
 
         </div>
-        <div class="col-sm-3 login_div">
-            <form class="login_form"
+        <div class="col-sm-3 login_div mt-5">
+            <form class="login_form pt-5 pl-2"
                 action="{% url 'quora:userLogin' %}" method="post">
                 <h4 class="login_form_q">Q</h4>
 

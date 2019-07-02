@@ -16,17 +16,22 @@ class ChangePasswordPage(generic.View):
     def get(self, request):
         current_user_details = current_user(request)
         if current_user_details['user'] is not None:
-            return render(request, 'quora/changePasswordPage.html', {
-                'username': current_user_details['user']})
+            template = 'quora/password/change.html'
+            context = {
+                'username': current_user_details['user']}
+            return render(request, template, context)
         else:
+            template = 'quora/login.html'
             messages.info(request, "Please login to continue")
-            return render(request, 'quora/login.html')
+            return render(request, template)
 
     @method_decorator(user_login_required)
     def post(self, request):
         current_user_details = current_user(request)
         if current_user_details['user'] is not None:
             if request.method == 'POST':
+                context = {'username': current_user_details['user']}
+                template = 'quora/password/change.html'
                 user = get_object_or_404(
                     User, name=current_user_details['user'])
                 oldPassword = request.POST['oldPassword']
@@ -34,20 +39,22 @@ class ChangePasswordPage(generic.View):
                     newPassword = request.POST['newPassword']
                     confirmPassword = request.POST['confirmPassword']
                     if newPassword == confirmPassword:
+                        template = 'quora/login.html'
                         user.password = newPassword
                         user.save()
                         messages.success(
                             request, 'Password successfully changed')
                         Session.objects.all().delete()
-                        return render(request, 'quora/login.html')
+                        return render(request, template)
                     else:
+
                         messages.info(
                             request, 'New password and confirm password don\'t match')
-                        return render(request, 'quora/changePasswordPage.html', {'username': current_user_details['user']})
+                        return render(request, template, context)
                 else:
                     messages.info(
                         request, 'Password is incorrect')
-                    return render(request, 'quora/changePasswordPage.html', {'username': current_user_details['user']})
+                    return render(request, template, context)
         else:
             messages.info(request, "Please login to continue")
             return render(request, 'quora/login.html')

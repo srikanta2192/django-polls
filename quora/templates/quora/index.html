@@ -12,7 +12,7 @@
 </head>
 
 <body class="body_class" >
-    <nav class="navbar navbar-expand-lg navbar-light bg-light nav_details">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light nav_details pl-12">
         <a class="navbar-brand q_anchor" href="{% url 'quora:index'%}">Q</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
     <div class="container-fluid">
         {% csrf_token %}
         {% if messages %}
-        <div class="messages messages_details" >
+        <div class="messages  messages_details pr-8" >
             {% for message in messages %}
             {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
             <span {% if message.tags %} class="{{ message.tags }} badge badge-success messages_font"
@@ -72,8 +72,8 @@
         </div>
         {% endif %}
         <div class="row pl-10">
-            <div class="col-sm-3">
-                <ul class="list-group list-group-flush side_details_list">
+            <div class="col-sm-3 pt-1">
+                <ul class="list-group list-group-flush side_details_list mt-4 pl-6">
                     <a href="{% url 'quora:userPosts' username %}"
                         class="list-group-item list-group-item-action side_details_list_item"><i
                             class="fas fa-rss mr-1"></i>Posts by me</a>
@@ -100,16 +100,16 @@
                                 {% if p.liked_by_session_user %}
                                 <a href="{% url 'quora:like' p.id %}"><i class="fas fa-thumbs-up"></i></a>
                                 {% else %}
-                                <a class="action_margin" href="{% url 'quora:like' p.id %}"><i
+                                <a class="ml-1" href="{% url 'quora:like' p.id %}"><i
                                         class="far fa-thumbs-up"></i></a>
                                 {% endif %}
-                                <a class="action_margin" href="{% url 'quora:commentPage' p.id%}"><i
+                                <a class="ml-1" href="{% url 'quora:commentPage' p.id%}"><i
                                         class="far fa-comment-dots"></i></a>
                                 {% if p.user.name == username %}
-                                <a class="action_margin" href="{% url 'quora:editPostPage' p.id %}"><i
+                                <a class="ml-1" href="{% url 'quora:editPostPage' p.id %}"><i
                                         class="far fa-edit"></i></a>
                                 {% endif %}
-                                <a class="action_margin" href="{% url 'quora:viewPost' p.id %}"><i
+                                <a class="ml-1" href="{% url 'quora:viewPost' p.id %}"><i
                                         class="fas fa-envelope-open-text"></i></a>
 
                             </div>

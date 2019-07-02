@@ -13,13 +13,15 @@ class EditCommentPageView(generic.View):
 
     @method_decorator(user_login_required)
     def get(self, request, post_id, comment_id):
+        template = 'quora/comment/edit.html'
         post = get_object_or_404(Post, pk=post_id)
         comment = get_object_or_404(Comment, pk=comment_id)
         current_user_details = current_user(request)
+        context = {
+            'post': post, 'comment': comment, 'username': current_user_details['user']
+        }
         if current_user_details['user'] is not None:
-            return render(request, 'quora/editCommentPage.html', {
-                'post': post, 'comment': comment, 'username': current_user_details['user']
-            })
+            return render(request, template, context)
         else:
             messages.info(request, "Login to continue")
             return render(request, "/quora/login.html")
@@ -40,4 +42,5 @@ class EditCommentPageView(generic.View):
             context = {
                 'message': 'Something\'s wrong'
             }
-            return render(request, 'quora/error_page.html', context)
+            template = 'quora/error_page.html'
+            return render(request, template, context)

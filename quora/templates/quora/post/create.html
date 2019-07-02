@@ -1,6 +1,6 @@
 {% extends 'quora/index.html' %}
 {% block content %}
-<div class="head_margin">
+<div class="mt-3">
 {% if post %}
 <form action="{% url 'quora:editPostSave' post.id %}" method="POST">
     {% csrf_token %}

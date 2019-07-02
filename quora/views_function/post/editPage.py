@@ -17,7 +17,10 @@ class EditPostPageView(generic.View):
         post = get_object_or_404(Post, pk=post_id)
         current_user_details = current_user(request)
         if current_user_details['user'] is not None:
-            return render(request, 'quora/createPostPage.html', {'post': post, 'username': current_user_details['user']})
+            template = 'quora/post/create.html'
+            context = {'post': post, 'username': current_user_details['user']}
+            return render(request, template, context)
         else:
+            template = {'post': post, 'username': current_user_details['user']}
             messages.info(request, "Login to continue")
-            return render(request, "/quora/login.html")
+            return render(request, template)
