@@ -1,25 +1,14 @@
-
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render
-from django.utils.decorators import method_decorator
-from django.views import generic
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.decorators import login_required
-
-
-from quora.models import Comment, Post
-from quora.views import current_user
-from django.contrib.sessions.models import Session
+from django.contrib.auth import get_user, update_session_auth_hash
 from django.contrib.auth.hashers import check_password
-from quora.models import Comment, Post
-from django.contrib.auth import update_session_auth_hash
-from quora.views import current_user
-from django.contrib.auth import authenticate, get_user, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sessions.models import Session
+from django.shortcuts import render
+from django.views import generic
 
 
-class ChangePasswordPage(generic.View):
+class ChangePasswordPage(LoginRequiredMixin, generic.View):
 
-    @method_decorator(login_required)
     def get(self, request):
         user = get_user(request)
         if user is not None:
@@ -32,7 +21,6 @@ class ChangePasswordPage(generic.View):
             messages.info(request, "Please login to continue")
             return render(request, template)
 
-    @method_decorator(login_required)
     def post(self, request):
         user = get_user(request)
         if user is not None:
@@ -41,7 +29,8 @@ class ChangePasswordPage(generic.View):
                 template = 'quora/password/change.html'
                 user = get_user(request)
                 currentPassword = user.password
-                passwordCheck = check_password(request.POST['oldPassword'], currentPassword)
+                passwordCheck = check_password(
+                    request.POST['oldPassword'], currentPassword)
                 if passwordCheck:
                     newPassword = request.POST['newPassword']
                     confirmPassword = request.POST['confirmPassword']

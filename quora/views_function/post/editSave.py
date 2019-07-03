@@ -1,6 +1,7 @@
-from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import generic
 
@@ -9,8 +10,8 @@ from quora.forms import PostForm
 from quora.models import Post
 
 
-class EditPostSaveView(generic.View):
-    @method_decorator(login_required)
+class EditPostSaveView(LoginRequiredMixin, generic.View):
+    
     @method_decorator(user_is_post_author)
     def post(self, request, post_id):
         if request.method == 'POST':
