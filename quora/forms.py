@@ -1,5 +1,5 @@
 from django import forms
-from quora.models import User, Post
+from quora.models import User2, Post
 from django.core.exceptions import ObjectDoesNotExist
 
 class UserForm(forms.Form):
@@ -10,7 +10,7 @@ class UserForm(forms.Form):
         password = self.cleaned_data['password']
         username = self.cleaned_data['username']
         try:
-            if User.objects.filter(name=username).exists():
+            if User2.objects.filter(name=username).exists():
                 raise forms.ValidationError("Username exists")
             return username
         except ObjectDoesNotExist:

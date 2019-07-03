@@ -3,10 +3,12 @@ from django.shortcuts import render, get_object_or_404
 from quora.views import current_user
 from quora.forms import UserForm
 from django.http import HttpResponse, HttpResponseRedirect
-from quora.models import User
+from quora.models import User2
 from django.contrib import messages
 
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, get_user, login
 
 
 class LoginPageView(generic.View):
@@ -24,11 +26,11 @@ class LoginPageView(generic.View):
             form = UserForm(request.POST)
             user = authenticate(
                 request, username=form.data['username'], password=form.data['password'])
-            print(user)
-            user = get_object_or_404(User, name=form.data['username'])
+            temp = User.objects.get(username=form.data['username'])
             if user is not None:
-                request.session['user'] = user.name
+                request.session['user'] = user.username
                 request.session['user_id'] = user.id
+                login(request, user)
                 return HttpResponseRedirect('/quora/')
             else:
                 messages.info(

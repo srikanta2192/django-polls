@@ -1,15 +1,16 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import generic
 
-from quora.decorators import user_is_post_author, user_login_required
+from quora.decorators import user_is_post_author
 from quora.forms import PostForm
 from quora.models import Post
 
 
 class EditPostSaveView(generic.View):
-    @method_decorator(user_login_required)
+    @method_decorator(login_required)
     @method_decorator(user_is_post_author)
     def post(self, request, post_id):
         if request.method == 'POST':

@@ -3,22 +3,23 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import generic
+from django.contrib.auth.decorators import login_required
 
-from quora.decorators import user_login_required
-from quora.models import Comment, Post, User
+from quora.models import Comment, Post
 from quora.views import current_user
 from django.contrib.sessions.models import Session
 from .commentPage import CommentPageView
+from django.contrib.auth import authenticate, get_user, login
+from django.contrib.auth.decorators import login_required
 
 
 class CreateCommentView(generic.View):
 
-    @method_decorator(user_login_required)
+    @method_decorator(login_required)
     def post(self, request, post_id):
-        current_user_details = current_user(request)
+        user = get_user(request)
         template = 'quora/post/view.html'
-        if current_user_details['user'] is not None:
-            user = get_object_or_404(User, name=current_user_details['user'])
+        if user is not None:
             if request.method == 'POST':
                 content = request.POST['content']
                 if len(content) > 0:
@@ -32,8 +33,8 @@ class CreateCommentView(generic.View):
         else:
             messages.info(request, "Login to create a post")
             return render(request, 'quora/login.html')
-            
+
         context = {'post': post, 'comment': comment,
-                   'username': current_user_details['user']}
+                   'username': user.username}
 
         return render(request, template, context)

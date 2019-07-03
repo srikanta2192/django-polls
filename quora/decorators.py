@@ -1,15 +1,16 @@
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from quora.models import Post, User
+from quora.models import Post, User2
 from django.contrib import messages
-
+from django.contrib.auth import get_user
 
 
 def user_is_post_author(function):
     def wrap(request, *args, **kwargs):
         post = Post.objects.get(pk=kwargs['post_id'])
         try:
-            if post.user.name == request.session['user']:
+            user = get_user(request)
+            if post.user.username == user.username:
                 return function(request, *args, **kwargs)
             else:
                 messages.info(
@@ -29,7 +30,7 @@ def user_is_post_author(function):
 def user_login_required(function):
     def wrapper(request, *args, **kwargs):
         try:
-            user = request.session['user']
+            user = get_user(request)
             if user is None:
                 return HttpResponseRedirect('/quora/loginpage/')
             else:

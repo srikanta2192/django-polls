@@ -73,11 +73,13 @@
         {% endif %}
         <div class="row pl-10">
             <div class="col-sm-3 pt-1">
+               {% if username %}
                 <ul class="list-group list-group-flush side_details_list mt-4 pl-6">
                     <a href="{% url 'quora:userPosts' username %}"
                         class="list-group-item list-group-item-action side_details_list_item"><i
                             class="fas fa-rss mr-1"></i>Posts by me</a>
                 </ul>
+                {% endif %}
             </div>
             <div class="col-sm-8">
                 {% block content %}
@@ -88,7 +90,7 @@
                         <div class="card-title">
                             <h5>{{p.title|title}}</h5>
                             <div class="dropdown-divider"></div>
-                            <h6>by <a href="{% url 'quora:userPosts' p.user.name %}">{{p.user.name|title}}</a></h6>
+                            <h6>by <a href="{% url 'quora:userPosts' p.user.username %}">{{p.user.username|title}}</a></h6>
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="card-text">
@@ -105,7 +107,7 @@
                                 {% endif %}
                                 <a class="ml-1" href="{% url 'quora:commentPage' p.id%}"><i
                                         class="far fa-comment-dots"></i></a>
-                                {% if p.user.name == username %}
+                                {% if p.user.username == username %}
                                 <a class="ml-1" href="{% url 'quora:editPostPage' p.id %}"><i
                                         class="far fa-edit"></i></a>
                                 {% endif %}
@@ -119,9 +121,9 @@
                                 {%for c in p.comment%}
                                 <div class="mt-1">
                                     <span>{{c.content}}</span>
-                                    by <a href="{% url 'quora:userPosts' c.by.name %}">
-                                        {{c.by.name|title}}</a>
-                                    {% if c.by.name == username %}
+                                    by <a href="{% url 'quora:userPosts' c.by.username %}">
+                                        {{c.by.username|title}}</a>
+                                    {% if c.by.username == username %}
                                     <a href="{% url 'quora:editCommentPage' p.id c.id %}"><i
                                             class="far fa-edit"></i></a></a>
                                     {%endif%}

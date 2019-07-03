@@ -1,32 +1,33 @@
 from django.contrib import messages
+from django.contrib.auth import get_user
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views import generic
 
-from quora.decorators import user_login_required
 from quora.models import Comment, Post
 from quora.views import current_user, viewPost
 
 
 class EditCommentPageView(generic.View):
 
-    @method_decorator(user_login_required)
+    @method_decorator(login_required)
     def get(self, request, post_id, comment_id):
         template = 'quora/comment/edit.html'
         post = get_object_or_404(Post, pk=post_id)
         comment = get_object_or_404(Comment, pk=comment_id)
-        current_user_details = current_user(request)
+        user = get_user(request)
         context = {
-            'post': post, 'comment': comment, 'username': current_user_details['user']
+            'post': post, 'comment': comment, 'username': user.username
         }
-        if current_user_details['user'] is not None:
+        if user is not None:
             return render(request, template, context)
         else:
             messages.info(request, "Login to continue")
             return render(request, "/quora/login.html")
 
-    @method_decorator(user_login_required)
+    @method_decorator(login_required)
     def post(self, request, comment_id):
         if request.method == 'POST':
             comment = get_object_or_404(Comment, pk=comment_id)

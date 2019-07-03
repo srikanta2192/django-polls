@@ -1,6 +1,5 @@
 from django.contrib import admin
 from polls.models import Question, Choice
-from quora.models import User, Post
 # Register your models here.
 
 class ChoiceInline(admin.StackedInline):

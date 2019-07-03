@@ -6,7 +6,7 @@ from quora.views import IndexView, userLogout, viewPost
 from quora.views_function.changePassword import ChangePasswordPage
 from quora.views_function.comment.commentPage import CommentPageView
 from quora.views_function.comment.create import CreateCommentView
-from quora.views_function.post.create import CreatePostPageView, CreatePostView
+from quora.views_function.post.create import CreatePostView
 from quora.views_function.createUser import CreateUserView
 from quora.views_function.comment.edit import EditCommentPageView
 from quora.views_function.post.editPage import EditPostPageView
@@ -33,7 +33,7 @@ urlpatterns = [
         CreateCommentView.as_view(), name='createComment'),
     url(r'^user/create/$', CreateUserView.as_view(), name='createUser'),
     url(r'^post/create/save/$', CreatePostView.as_view(), name='createPost'),
-    url(r'^post/create$', CreatePostPageView.as_view(), name='createPostPage'),
+    url(r'^post/create$', CreatePostView.as_view(), name='createPostPage'),
     url(r'^(?P<post_id>[0-9]+)/like/$',
         LikeView.as_view(), name='like'),
     url(r'^(?P<post_id>[0-9]+)/post/edit/$',
