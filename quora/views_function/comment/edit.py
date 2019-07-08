@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 
 from quora.models import Comment, Post
-from quora.views import current_user, viewPost
+from quora.views import viewPost
 
 
 class EditCommentPageView(generic.View):

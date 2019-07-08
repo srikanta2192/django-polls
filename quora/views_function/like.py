@@ -2,6 +2,8 @@ from django.contrib.auth import get_user
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
+from django.contrib import messages
+
 
 from quora.models import Like, Post
 from quora.views import IndexView

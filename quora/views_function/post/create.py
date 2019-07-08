@@ -9,7 +9,6 @@ from django.views import generic
 from quora.decorators import user_is_post_author
 from quora.forms import PostForm
 from quora.models import Post
-from quora.views import current_user
 
 
 class CreatePostView(LoginRequiredMixin, generic.View):
@@ -18,13 +17,13 @@ class CreatePostView(LoginRequiredMixin, generic.View):
         user = get_user(request)
         template = 'quora/post/create.html',
         context = {'username': user.username}
+
         return render(request, template, context)
 
     def post(self, request):
         if request.method == 'POST':
             form = PostForm(request.POST)
         try:
-            username = request.session['user']
             if form.is_valid():
                 new_post = Post.objects.create(
                     created_at=timezone.now(),

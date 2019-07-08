@@ -14,19 +14,15 @@ class CreateUserView(generic.View):
     def post(self, request):
         if request.method == 'POST':
             form = UserForm(request.POST)
-            import pdb
             try:
                 if form.is_valid():
                     form.clean_message()
-                    new_user = User.objects.create_user(username=form.data['username'],
-                                                    email=form.data['email'],
-                                                    password=form.data['password'])
-
-                    print(authenticate(
-                        request, username=form.data['username'], password=form.data['password']))
-                    pdb.set_trace()
+                    new_user = User.objects.create_user(username=request.POST['username'],
+                                                    email=request.POST['email'],
+                                                    password=request.POST['password'])
                     request.session['user'] = new_user.username
                     messages.success(request, "User created successfully")
+
                     return HttpResponseRedirect('/quora/')
             except IntegrityError as e:
                 messages.info(request,
