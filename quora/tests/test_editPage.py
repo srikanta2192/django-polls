@@ -12,13 +12,12 @@ from quora.models import Post, Comment
 from quora.forms import PostForm
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.test import TestCase
 from django.test import Client
 
-class EditPostPageView(TestCase):
+class TestEditPostPageView:
 
     def test_gest_should_return_200_if_user_is_the_post_author(self):
-        user = User.objects.create_user(username="test_user",
+        user = User.objects.create_user(username="test_edit_page_user",
                                         email="test@testemail.com")
         post = Post.objects.create(user=user, created_at=timezone.now(
         ), content="test_post_content", title="test_post_title")
@@ -28,11 +27,12 @@ class EditPostPageView(TestCase):
         response = client.get(
             ("/quora/{}/post/edit/").format(post.id), follow=True)
         assert response.status_code == 200
+        user.delete()
 
     def test_gest_should_return_302_if_user_is_not_the_post_author(self):
-        user = User.objects.create_user(username="test_user",
+        user = User.objects.create_user(username="test_edit_page_user",
                                         email="test@testemail.com")
-        user2 = User.objects.create_user(username="test_user2",
+        user2 = User.objects.create_user(username="test_edit_page_user2",
                                          email="test@testemail.com")
         post = Post.objects.create(user=user, created_at=timezone.now(
         ), content="test_post_content", title="test_post_title")
@@ -42,11 +42,13 @@ class EditPostPageView(TestCase):
         response = client.get(
             ("/quora/{}/post/edit/").format(post.id))
         assert response.status_code == 302
+        user.delete()
+        user2.delete()
 
     def test_post_should_return_200_and_post_should_be_saved_if_user_session_exists(self):
         
         
-        user = User.objects.create_user(username="test_user",
+        user = User.objects.create_user(username="test_edit_page_user",
                                         email="test@testemail.com"
                                         )
         user.set_password("test_password")                                        
@@ -68,3 +70,4 @@ class EditPostPageView(TestCase):
         response = client.post(url, data=form, content_type="application/x-www-form-urlencoded", follow=True
                                )
         assert response.status_code == 200
+        user.delete()

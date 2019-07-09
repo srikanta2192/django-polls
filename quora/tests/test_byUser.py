@@ -15,16 +15,15 @@ from quora.views_function.post.byUser import PostsByUserView
 from django.core.exceptions import ObjectDoesNotExist
 from unittest.mock import *
 from quora.models import Post, Comment
-from django.test import TestCase
 
-class ByUserTestCases(TestCase):
+class TestByUser:
 
     def setup(self):
         self.client = Client()
 
     def test_get_api_helper_should_return_post_list_by_specific_user_if_username_is_passed(self):
         p = PostsByUserView()
-        user = User.objects.create_user(username="test_user",
+        user = User.objects.create_user(username="test_by_user",
                                         email="test@testemail.com",
                                         password="test_password")
         post = Post.objects.create(user=user, created_at=timezone.now(
@@ -38,6 +37,7 @@ class ByUserTestCases(TestCase):
         compare_post_list = set([post, post2])
 
         assert test_post_list == compare_post_list
+        user.delete()
 
     def test_get_api_helper_should_return_none_if_user_does_not_exist(self):
         p = PostsByUserView()

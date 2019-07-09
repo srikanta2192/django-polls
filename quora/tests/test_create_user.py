@@ -6,14 +6,14 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'myweb.settings'
 django.setup()
 
 from django.db import transaction, IntegrityError
-from django.test import Client, RequestFactory, TestCase
+from django.test import Client, RequestFactory
 from quora.views_function.createUser import CreateUserView
 from quora.forms import UserForm
 from quora.models import User
 
 
 
-class CreateUserViewTestCases(TestCase):
+class TestCreateUserView:
 
     def setup(self):
         pass
@@ -28,7 +28,7 @@ class CreateUserViewTestCases(TestCase):
             "email":"test@test.com"
         }
         response = client.post('/quora/user/create/', data=context, follow=True)
-        user = User.objects.get(username="Test_user")
+        user = User.objects.get(username="Test_create_user")
 
         assert user.username == "Test_user"
         assert response.status_code == 200
